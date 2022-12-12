@@ -141,6 +141,6 @@ Agora, precisamos apenas gerar o resultado na tela com o código abaixo:
 ```python
 cv2_imshow(image)
 ```
-##### Esse resultado exibirá o nosso rosto dentro de um retângulo, junto à percentagem de certeza que é uma face humana dessa forma:
+##### Esse resultado exibirá o nosso rosto dentro de um retângulo, junto à percentagem de certeza que é uma face humana, dessa forma:
 
 ![imagem](https://i.ibb.co/2MxRj3T/download1.png)
