@@ -75,5 +75,22 @@ image = cv2.imread(image_file)
 image = imutils.resize(image, width=400)
 (h, w) = image.shape[:2]
 print(w,h)
-cv2_imshow(image)
+cv2_imshow(image) #"Imprime" a imagem redimencionada na tela
 ```
+#### Parte3 - Baixando os modelos
+O detector de face em Deep Learning do OpenCV é baseado na estrutura Single Shot Detector (SSD) com uma rede base ResNet. A rede é definida e treinada usando o [Caffe Deep Learning framework](https://caffe.berkeleyvision.org/)
+
+Baixe o modelo de detecção de rosto pré-treinado, composto por dois arquivos:
+
+A definição de rede (deploy.prototxt) e os pesos aprendidos (res10_300x300_ssd_iter_140000.caffemodel)
+
+Utilizando as linhas de código abaixo no google colab
+
+```python
+!wget -N https://raw.githubusercontent.com/opencv/opencv/master/samples/dnn/face_detector/deploy.prototxt
+!wget -N https://raw.githubusercontent.com/opencv/opencv_3rdparty/dnn_samples_face_detector_20170830/res10_300x300_ssd_iter_140000.caffemodel
+```
+
+Estamos utilizandos esses arquivos, pois eles já estão treinados com o fim que nós queremos (detectar faces);
+
+#### Parte4 - 
