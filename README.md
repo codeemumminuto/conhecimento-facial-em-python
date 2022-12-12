@@ -77,7 +77,7 @@ image = imutils.resize(image, width=400)
 print(w,h)
 cv2_imshow(image) #"Imprime" a imagem redimencionada na tela
 ```
-#### Parte3 - Baixando os modelos
+#### Parte3 - Baixando e carregando os modelos
 O detector de face em Deep Learning do OpenCV é baseado na estrutura Single Shot Detector (SSD) com uma rede base ResNet. A rede é definida e treinada usando o [Caffe Deep Learning framework](https://caffe.berkeleyvision.org/)
 
 Baixe o modelo de detecção de rosto pré-treinado, composto por dois arquivos:
@@ -92,5 +92,54 @@ Utilizando as linhas de código abaixo no google colab
 ```
 
 Estamos utilizandos esses arquivos, pois eles já estão treinados com o fim que nós queremos (detectar faces);
+Agora vamos carregar o modelo de rede de detecção facial pré-treinado do disco:
 
-#### Parte4 - 
+```python
+print("[INFO] loading model...")
+prototxt = 'deploy.prototxt'
+model = 'res10_300x300_ssd_iter_140000.caffemodel'
+net = cv2.dnn.readNetFromCaffe(prototxt, model)
+```
+Use a função dnn.blobFromImage para construir um blob de entrada redimensionando a imagem para 300x300 pixels fixos e normalizando-a:
+
+```python
+image = imutils.resize(image, width=400)
+blob = cv2.dnn.blobFromImage(cv2.resize(image, (300, 300)), 1.0, (300, 300), (104.0, 177.0, 123.0))
+```
+Computar os objetos detectados na imagem em busca de uma face:
+
+```python
+print("[INFO] computing object detections...")
+net.setInput(blob)
+detections = net.forward()
+```
+Loop para as detecções e desenhe caixas ao redor dos rostos detectados:
+
+```python
+for i in range(0, detections.shape[2]):
+
+	# extrair a probabilidade associada à previsão
+	confidence = detections[0, 0, i, 2]
+
+	# filtra detecções fracas garantindo que a "confiança" seja
+	# maior que o limite mínimo de confiança
+	if confidence > 0.5: #Nossa detecção deve ter no mínimo 50% de certeza
+		# calcula as coordenadas (x, y) da caixa delimitadora do objeto
+		box = detections[0, 0, i, 3:7] * np.array([w, h, w, h])
+		(startX, startY, endX, endY) = box.astype("int")
+		# desenha a caixa delimitadora da face junto com a probabilidade associada
+		text = "{:.2f}%".format(confidence * 100)
+		y = startY - 10 if startY - 10 > 10 else startY + 10
+		cv2.rectangle(image, (startX, startY), (endX, endY), (0, 0, 255), 2)
+		cv2.putText(image, text, (startX, y),
+			cv2.FONT_HERSHEY_SIMPLEX, 0.45, (0, 0, 255), 2)
+```
+
+#### Parte4 - Obtendo o resultado
+Agora, precisamos apenas gerar o resultado na tela com o código abaixo:
+
+```python
+cv2_imshow(image)
+```
+Esse resultado exibirá o nosso rosto dentro de um retângulo, junto a percentagem de certeza que é uma face humana dessa forma:
+![imagem](https://i.ibb.co/2MxRj3T/download1.png)
